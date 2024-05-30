@@ -1,0 +1,21 @@
+Статьи на эту тему:
+https://habr.com/ru/articles/678918/ Это отличная статья, в ней написано как сделать тоже самое но более правильно. 
+у GSS есть навороченный скрипт vCert.sh(https://virtham.us/posts/f/vcert) (https://gist.github.com/fluggelgleckheimlen/d5c8886ac49f4f66823b80841940bd5c) для починки всего связанного с сертификатами, кроме продления solution users до 10 лет.
+https://knowledge.broadcom.com/external/article?legacyId=76719
+
+
+Если не помогло
+В том случае если вышенаписанное не помогло (При выпуске сертификатов через cartificate-manager не получается перезапустить сервисы и процесс останавливается на 85%) то скорее всего нужно перевыпустить STS сертификат который используется для выпуска SAML-токенов и от него зависит взаимная аутентификация всех сервисов внутри vCenter Server. Для этого нужно запускать отдельный скрипт. (Прилагаю)
+1.	Загружаем этот скрипт через WinCSP на VCenter в /tmp fixsts.rar
+2.	# chsh -s /bin/bash root для чтобы подключиться через WinCSP иначе будет ошибка подключения (https://internet-lab.ru/vcenter_winscp_error_large_sftp) вернуть как было # chsh -s /bin/appliancesh root
+3.	# cd /tmp
+4.	# chmod +x fixsts.sh
+5.	# ./fixsts.sh
+6.	# service-control –stop –all && service-control –start –all
+7.	После этого можно проверить валидность всех сертификатов for i in $(/usr/lib/vmware-vmafd/bin/vecs-cli store list); do echo STORE $i; sudo /usr/lib/vmware-vmafd/bin/vecs-cli entry list –store $i –text | egrep "Alias|Not After"; done
+8.	И если это необходимо вернуться к работе с утилитой cartificate-manager /usr/lib/vmware-vmca/bin/cartificate-manager
+
+Статьи на эту тему:
+https://habr.com/ru/articles/678918/ Это отличная статья, в ней написано как сделать тоже самое но более правильно. 
+у GSS есть навороченный скрипт vCert.sh(https://virtham.us/posts/f/vcert) (https://gist.github.com/fluggelgleckheimlen/d5c8886ac49f4f66823b80841940bd5c) для починки всего связанного с сертификатами, кроме продления solution users до 10 лет.
+https://knowledge.broadcom.com/external/article?legacyId=76719
